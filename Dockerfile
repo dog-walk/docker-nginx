@@ -7,7 +7,7 @@ LABEL Description="This image runs Nginx based web proxy" Vendor="ProfitCo" Vers
 
 # Install required packages
 RUN apt-get update \
-    && apt-get install build-essential wget curl vim openssl libssl-dev unzip sudo -y \
+    && apt-get install build-essential wget curl vim openssl libssl-dev zlib1g-dev libpcre3 libpcre3-dev unzip sudo -y \
     && apt-get clean all
 
 # Setup Environment
@@ -32,16 +32,26 @@ RUN wget https://github.com/pagespeed/ngx_pagespeed/archive/v${NPS_VERSION}-beta
 RUN wget http://nginx.org/download/nginx-${NGINX_VERSION}.tar.gz \
     && tar -xzf nginx-${NGINX_VERSION}.tar.gz \
     && cd nginx-${NGINX_VERSION}/ \
-    && ./configure --add-module=$HOME/ngx_pagespeed-${NPS_VERSION} ${PS_NGX_EXTRA_FLAGS} \
+    && ./configure --add-module=$SRC_PATH/ngx_pagespeed-${NPS_VERSION}-beta ${PS_NGX_EXTRA_FLAGS} \
     && make \
     && make install \
-    && ln -s /opt/nginx/sbin/nginx /usr/sbin/nginx \
-#    && ln -s /opt/nginx/etc /etc/nginx \
+    && ln -s /usr/local/nginx/sbin/nginx /usr/sbin/nginx \
+    && ln -s /usr/local/nginx /etc/nginx \
     && cd ~ \
     && rm -Rf /src/*
 
 # Set new working dir
-WORKDIR /etc/nginx
+WORKDIR /usr/local/nginx
+
+# Copy configuration files for Nginx
+COPY nginx.conf ./conf/
+
+# Send request and error logs to docker log collector
+RUN ln -sf /dev/stdout /usr/local/nginx/logs/access.log \
+    && ln -sf /dev/stderr /usr/local/nginx/logs/error.log
+
+# Share volume for sites configurations
+VOLUME ["/usr/local/nginx/conf/sites"]
 
 # Set ports to listen
 EXPOSE 80 443
@@ -50,4 +60,4 @@ EXPOSE 80 443
 STOPSIGNAL SIGTERM
 
 # Define entrypoint for container
-ENTRYPOINT ["nginx", "-g", "daemon off;"]
+CMD ["nginx", "-g", "daemon off;"]
