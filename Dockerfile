@@ -13,7 +13,8 @@ RUN apt-get update \
 # Setup Environment
 ENV SRC_PATH=/src \
     NPS_VERSION=1.12.34.2 \
-    NGINX_VERSION=1.13.1
+    NGINX_VERSION=1.13.1 \
+    NGINX_PATH=/usr/local/nginx
 
 # Use SRC_PATH as a working dir
 WORKDIR $SRC_PATH
@@ -35,20 +36,20 @@ RUN wget http://nginx.org/download/nginx-${NGINX_VERSION}.tar.gz \
     && ./configure --add-module=$SRC_PATH/ngx_pagespeed-${NPS_VERSION}-beta ${PS_NGX_EXTRA_FLAGS} \
     && make \
     && make install \
-    && ln -s /usr/local/nginx/sbin/nginx /usr/sbin/nginx \
-    && ln -s /usr/local/nginx /etc/nginx \
+    && ln -s $NGINX_PATH/sbin/nginx /usr/sbin/nginx \
+    && ln -s $NGINX_PATH /etc/nginx \
     && cd ~ \
-    && rm -Rf /src/*
+    && rm -Rf $SRC_PATH/*
 
 # Set new working dir
-WORKDIR /usr/local/nginx
+WORKDIR $NGINX_PATH
 
 # Copy configuration files for Nginx
 COPY nginx.conf ./conf/
 
 # Send request and error logs to docker log collector
-RUN ln -sf /dev/stdout /usr/local/nginx/logs/access.log \
-    && ln -sf /dev/stderr /usr/local/nginx/logs/error.log
+RUN ln -sf /dev/stdout $NGINX_PATH/logs/access.log \
+    && ln -sf /dev/stderr $NGINX_PATH/logs/error.log
 
 # Share volume for sites configurations
 VOLUME ["/usr/local/nginx/conf/sites"]
