@@ -33,7 +33,7 @@ RUN wget https://github.com/pagespeed/ngx_pagespeed/archive/v${NPS_VERSION}-beta
 RUN wget http://nginx.org/download/nginx-${NGINX_VERSION}.tar.gz \
     && tar -xzf nginx-${NGINX_VERSION}.tar.gz \
     && cd nginx-${NGINX_VERSION}/ \
-    && ./configure --add-module=$SRC_PATH/ngx_pagespeed-${NPS_VERSION}-beta ${PS_NGX_EXTRA_FLAGS} \
+    && ./configure --with-http_ssl_module --add-module=$SRC_PATH/ngx_pagespeed-${NPS_VERSION}-beta ${PS_NGX_EXTRA_FLAGS} \
     && make \
     && make install \
     && ln -s $NGINX_PATH/sbin/nginx /usr/sbin/nginx \
