@@ -41,10 +41,6 @@ RUN wget http://nginx.org/download/nginx-${NGINX_VERSION}.tar.gz \
     && cd ~ \
     && rm -Rf $SRC_PATH/*
 
-# Remove unnecessary packages
-RUN apt-get remove build-essential libssl-dev zlib1g-dev libpcre3 libpcre3-dev -y \
-    && apt-get clean all
-
 # Set new working dir
 WORKDIR $NGINX_PATH
 
