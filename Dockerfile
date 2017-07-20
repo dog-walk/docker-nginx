@@ -41,18 +41,27 @@ RUN wget http://nginx.org/download/nginx-${NGINX_VERSION}.tar.gz \
     && cd ~ \
     && rm -Rf $SRC_PATH/*
 
+# Remove unnecessary packages
+RUN apt-get remove build-essential libssl-dev zlib1g-dev libpcre3 libpcre3-dev -y \
+    && apt-get clean all
+
 # Set new working dir
 WORKDIR $NGINX_PATH
 
 # Copy configuration files for Nginx
 COPY nginx.conf ./conf/
 
+# Copy sample configurations for Nginx
+RUN mkdir -p /usr/local/nginx/conf/samples
+COPY http.site.conf ./samples/
+COPY https.site.conf ./samples/
+
 # Send request and error logs to docker log collector
 RUN ln -sf /dev/stdout $NGINX_PATH/logs/access.log \
     && ln -sf /dev/stderr $NGINX_PATH/logs/error.log
 
 # Share volume for sites configurations
-VOLUME ["/usr/local/nginx/conf/sites"]
+VOLUME ["/usr/local/nginx/conf/sites", "/usr/local/nginx/conf/ssl"]
 
 # Set ports to listen
 EXPOSE 80 443

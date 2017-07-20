@@ -1,0 +1,32 @@
+[Unit]
+Description=Nginx Proxy Service
+Documentation=https://github.com/kozhin/docker-nginx
+After=network.target docker.socket
+Requires=docker.socket
+
+[Service]
+TimeoutStartSec=0
+RestartSec=30
+Restart=always
+
+Environment="NAME=nginx_proxy"
+Environment="CONF_PATH=/home/core/etc/Sites"
+Environment="SSL_PATH=/home/core/etc/Certs"
+Environment="IMG=kozhin/nginx:latest"
+Environment="HTTP_PORT=80:80/tcp"
+Environment="HTTPS_PORT=443:443/tcp"
+
+# Clean-up bad state if still hanging around
+ExecStartPre=-/usr/bin/docker rm -f $NAME
+
+# Attempt to pull new image for security updates
+ExecStartPre=-/usr/bin/docker pull $IMG
+
+# Main process
+ExecStart=/usr/bin/docker run --rm -v ${CONF_PATH}:/usr/local/nginx/conf/sites -v ${SSL_PATH}:/usr/local/nginx/conf/certs --name ${NAME} -p ${HTTP_PORT} -p ${HTTPS_PORT} ${IMG}
+
+# Stop main process
+ExecStop=/usr/bin/docker stop ${NAME}
+
+[Install]
+WantedBy=multi-user.target
