@@ -19,21 +19,21 @@ ENV SRC_PATH=/src \
 # Use SRC_PATH as a working dir
 WORKDIR $SRC_PATH
 
-# Download and install Google PageSpeed module for Nginx
-RUN wget https://github.com/pagespeed/ngx_pagespeed/archive/v${NPS_VERSION}-beta.zip \
-    && unzip v${NPS_VERSION}-beta.zip \
-    && rm v${NPS_VERSION}-beta.zip \
-    && cd ngx_pagespeed-${NPS_VERSION}-beta/ \
+# Get the latest stable Nginx PageSpeed module sources
+RUN wget https://github.com/pagespeed/ngx_pagespeed/archive/latest-stable.tar.gz \
+    && tar -xzf latest-stable.tar.gz \
+    && rm latest-stable.tar.gz \
+    && cd ngx_pagespeed-latest-stable \
     && PSOL_URL=https://dl.google.com/dl/page-speed/psol/${NPS_VERSION}.tar.gz \
     && [ -e scripts/format_binary_url.sh ] && PSOL_URL=$(scripts/format_binary_url.sh PSOL_BINARY_URL) \
     && wget ${PSOL_URL} \
     && tar -xzvf $(basename ${PSOL_URL})
 
-# Download and install Nginx web-server
+# Download, build and install Nginx
 RUN wget http://nginx.org/download/nginx-${NGINX_VERSION}.tar.gz \
     && tar -xzf nginx-${NGINX_VERSION}.tar.gz \
     && cd nginx-${NGINX_VERSION}/ \
-    && ./configure --with-http_stub_status_module --with-http_flv_module --with-http_ssl_module --with-http_dav_module --with-http_sub_module --with-http_realip_module --with-http_gzip_static_module --with-http_secure_link_module --with-ipv6 --with-debug --add-module=$SRC_PATH/ngx_pagespeed-${NPS_VERSION}-beta ${PS_NGX_EXTRA_FLAGS} \
+    && ./configure --with-http_stub_status_module --with-http_flv_module --with-http_ssl_module --with-http_dav_module --with-http_sub_module --with-http_realip_module --with-http_gzip_static_module --with-http_secure_link_module --add-module=$SRC_PATH/ngx_pagespeed-latest-stable ${PS_NGX_EXTRA_FLAGS} \
     && make \
     && make install \
     && ln -s $NGINX_PATH/sbin/nginx /usr/sbin/nginx \
