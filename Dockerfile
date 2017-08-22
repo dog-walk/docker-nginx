@@ -13,7 +13,7 @@ RUN apt-get update \
 # Setup Environment
 ENV SRC_PATH=/src \
     NPS_VERSION=1.12.34.2 \
-    NGINX_VERSION=1.13.3 \
+    NGINX_VERSION=1.13.4 \
     NGINX_PATH=/usr/local/nginx
 
 # Use SRC_PATH as a working dir
@@ -24,6 +24,8 @@ RUN wget https://github.com/pagespeed/ngx_pagespeed/archive/latest-stable.tar.gz
     && tar -xzf latest-stable.tar.gz \
     && rm latest-stable.tar.gz \
     && cd ngx_pagespeed-latest-stable \
+    && wget https://github.com/pagespeed/ngx_pagespeed/blob/ef3899515e40fc4fd7dd553fdef0048e937db7f4/src/ngx_pagespeed.cc \
+    && mv ngx_pagespeed.cc ./src/ \
     && PSOL_URL=https://dl.google.com/dl/page-speed/psol/${NPS_VERSION}.tar.gz \
     && [ -e scripts/format_binary_url.sh ] && PSOL_URL=$(scripts/format_binary_url.sh PSOL_BINARY_URL) \
     && wget ${PSOL_URL} \
