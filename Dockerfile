@@ -24,8 +24,6 @@ RUN wget https://github.com/pagespeed/ngx_pagespeed/archive/latest-stable.tar.gz
     && tar -xzf latest-stable.tar.gz \
     && rm latest-stable.tar.gz \
     && cd ngx_pagespeed-latest-stable \
-    && wget https://github.com/pagespeed/ngx_pagespeed/blob/ef3899515e40fc4fd7dd553fdef0048e937db7f4/src/ngx_pagespeed.cc \
-    && mv ngx_pagespeed.cc ./src/ \
     && PSOL_URL=https://dl.google.com/dl/page-speed/psol/${NPS_VERSION}.tar.gz \
     && [ -e scripts/format_binary_url.sh ] && PSOL_URL=$(scripts/format_binary_url.sh PSOL_BINARY_URL) \
     && wget ${PSOL_URL} \
