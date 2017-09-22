@@ -55,7 +55,6 @@ RUN wget http://nginx.org/download/nginx-${NGINX_VERSION}.tar.gz \
       --with-http_stub_status_module \
       --with-http_sub_module \
       --with-http_v2_module \
-      --with-ipv6 \
       --with-mail \
       --with-mail_ssl_module \
       --with-stream \
