@@ -12,7 +12,7 @@ RUN apt-get update \
 
 # Setup Environment
 ENV SRC_PATH /src
-ENV NPS_VERSION 1.12.34.2
+ENV NPS_VERSION 1.12.34.3
 ENV NGINX_VERSION 1.13.5
 ENV NGINX_PATH /usr/local/nginx
 
@@ -20,18 +20,18 @@ ENV NGINX_PATH /usr/local/nginx
 WORKDIR $SRC_PATH
 
 # Get the latest stable Nginx PageSpeed module sources
-#RUN wget https://github.com/pagespeed/ngx_pagespeed/archive/latest-stable.tar.gz \
-#    && tar -xzf latest-stable.tar.gz \
-#    && rm latest-stable.tar.gz \
-#    && cd ngx_pagespeed-latest-stable \
-#    && PSOL_URL=https://dl.google.com/dl/page-speed/psol/${NPS_VERSION}.tar.gz \
-#    && [ -e scripts/format_binary_url.sh ] \
-#    && PSOL_URL=$(scripts/format_binary_url.sh PSOL_BINARY_URL) \
-#    && wget ${PSOL_URL} \
-#    && tar -xzvf $(basename ${PSOL_URL})
+RUN wget https://github.com/pagespeed/ngx_pagespeed/archive/latest-stable.tar.gz \
+    && tar -xzf latest-stable.tar.gz \
+    && rm latest-stable.tar.gz \
+    && cd ngx_pagespeed-latest-stable \
+    && PSOL_URL=https://dl.google.com/dl/page-speed/psol/${NPS_VERSION}.tar.gz \
+    && [ -e scripts/format_binary_url.sh ] \
+    && PSOL_URL=$(scripts/format_binary_url.sh PSOL_BINARY_URL) \
+    && wget ${PSOL_URL} \
+    && tar -xzvf $(basename ${PSOL_URL})
 
 # Use SRC_PATH as a working dir
-#WORKDIR $SRC_PATH
+WORKDIR $SRC_PATH
 
 # Download, build and install Nginx
 RUN wget http://nginx.org/download/nginx-${NGINX_VERSION}.tar.gz \
@@ -60,7 +60,7 @@ RUN wget http://nginx.org/download/nginx-${NGINX_VERSION}.tar.gz \
       --with-stream \
       --with-stream_ssl_module \
       --with-threads \
-      #--add-module=$SRC_PATH/ngx_pagespeed-latest-stable ${PS_NGX_EXTRA_FLAGS} \
+      --add-module=$SRC_PATH/ngx_pagespeed-latest-stable ${PS_NGX_EXTRA_FLAGS} \
     && make \
     && make install \
     && ln -s $NGINX_PATH/sbin/nginx /usr/sbin/nginx \
