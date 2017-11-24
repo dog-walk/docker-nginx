@@ -13,7 +13,7 @@ RUN apt-get update \
 # Setup Environment
 ENV SRC_PATH /src
 ENV NPS_VERSION 1.12.34.3
-ENV NGINX_VERSION 1.13.6
+ENV NGINX_VERSION 1.13.7
 ENV NGINX_PATH /usr/local/nginx
 
 # Use SRC_PATH as a working dir
