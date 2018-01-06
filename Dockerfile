@@ -2,8 +2,10 @@
 FROM debian:latest
 
 # Set maintainer and image info
-MAINTAINER Konstantin Kozhin <konstantin@profitco.ru>
-LABEL Description="This image runs Nginx based web proxy" Vendor="ProfitCo" Version="1.0"
+LABEL Description="This image runs Nginx based web proxy" \
+      Vendor="CodedRed" \
+      Version="1.1" \
+      Maintainer="Konstantin Kozhin <konstantin@codedred.com>"
 
 # Install required packages
 RUN apt-get update \
@@ -13,7 +15,7 @@ RUN apt-get update \
 # Setup Environment
 ENV SRC_PATH /src
 ENV NPS_VERSION 1.12.34.3
-ENV NGINX_VERSION 1.13.7
+ENV NGINX_VERSION 1.13.8
 ENV NGINX_PATH /usr/local/nginx
 
 # Use SRC_PATH as a working dir
