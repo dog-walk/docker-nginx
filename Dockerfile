@@ -14,23 +14,23 @@ RUN apt-get update \
 
 # Setup Environment
 ENV SRC_PATH /src
-ENV NPS_VERSION 1.12.34.3
-ENV NGINX_VERSION 1.13.8
+ENV NPS_VERSION 1.13.35.2
+ENV NGINX_VERSION 1.13.9
 ENV NGINX_PATH /usr/local/nginx
 
 # Use SRC_PATH as a working dir
 WORKDIR $SRC_PATH
 
 # Get the latest stable Nginx PageSpeed module sources
-RUN wget https://github.com/pagespeed/ngx_pagespeed/archive/latest-stable.tar.gz \
-    && tar -xzf latest-stable.tar.gz \
-    && rm latest-stable.tar.gz \
-    && cd ngx_pagespeed-latest-stable \
-    && PSOL_URL=https://dl.google.com/dl/page-speed/psol/${NPS_VERSION}.tar.gz \
-    && [ -e scripts/format_binary_url.sh ] \
-    && PSOL_URL=$(scripts/format_binary_url.sh PSOL_BINARY_URL) \
-    && wget ${PSOL_URL} \
-    && tar -xzvf $(basename ${PSOL_URL})
+#RUN wget https://github.com/apache/incubator-pagespeed-ngx/archive/latest-stable.tar.gz \
+#    && tar -xzf latest-stable.tar.gz \
+#    && rm latest-stable.tar.gz \
+#    && cd ngx_pagespeed-latest-stable \
+##    && PSOL_URL=https://dl.google.com/dl/page-speed/psol/${NPS_VERSION}.tar.gz \
+ #   && [ -e scripts/format_binary_url.sh ] \
+ #   && PSOL_URL=$(scripts/format_binary_url.sh PSOL_BINARY_URL) \
+ #   && wget ${PSOL_URL} \
+ #   && tar -xzvf $(basename ${PSOL_URL})
 
 # Use SRC_PATH as a working dir
 WORKDIR $SRC_PATH
@@ -62,7 +62,7 @@ RUN wget http://nginx.org/download/nginx-${NGINX_VERSION}.tar.gz \
       --with-stream \
       --with-stream_ssl_module \
       --with-threads \
-      --add-module=$SRC_PATH/ngx_pagespeed-latest-stable ${PS_NGX_EXTRA_FLAGS} \
+#      --add-module=$SRC_PATH/ngx_pagespeed-latest-stable ${PS_NGX_EXTRA_FLAGS} \
     && make \
     && make install \
     && ln -s $NGINX_PATH/sbin/nginx /usr/sbin/nginx \
@@ -96,3 +96,9 @@ STOPSIGNAL SIGTERM
 
 # Define entrypoint for container
 CMD ["nginx", "-g", "daemon off;"]
+
+#sudo apt-get install python-certbot-nginx -t stretch-backports
+#sudo certbot --authenticator webroot --installer nginx
+#sudo certbot certonly --authenticator standalone --pre-hook "nginx -s stop" --post-hook "nginx"
+#sudo certbot renew --dry-run
+#https://certbot.eff.org/#debianstretch-nginx
