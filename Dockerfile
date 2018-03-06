@@ -7,30 +7,19 @@ LABEL Description="This image runs Nginx based web proxy" \
       Version="1.1" \
       Maintainer="Konstantin Kozhin <konstantin@codedred.com>"
 
+# Install backports
+RUN echo 'deb http://ftp.debian.org/debian stretch-backports main' > /etc/apt/sources.list.d/backports.list
+
 # Install required packages
 RUN apt-get update \
     && apt-get install build-essential wget curl vim openssl libssl-dev zlib1g-dev libpcre3 libpcre3-dev unzip sudo -y \
+    && apt-get install certbot -t stretch-backports -y \ 
     && apt-get clean all
 
 # Setup Environment
 ENV SRC_PATH /src
-ENV NPS_VERSION 1.13.35.2
 ENV NGINX_VERSION 1.13.9
 ENV NGINX_PATH /usr/local/nginx
-
-# Use SRC_PATH as a working dir
-WORKDIR $SRC_PATH
-
-# Get the latest stable Nginx PageSpeed module sources
-#RUN wget https://github.com/apache/incubator-pagespeed-ngx/archive/latest-stable.tar.gz \
-#    && tar -xzf latest-stable.tar.gz \
-#    && rm latest-stable.tar.gz \
-#    && cd ngx_pagespeed-latest-stable \
-##    && PSOL_URL=https://dl.google.com/dl/page-speed/psol/${NPS_VERSION}.tar.gz \
- #   && [ -e scripts/format_binary_url.sh ] \
- #   && PSOL_URL=$(scripts/format_binary_url.sh PSOL_BINARY_URL) \
- #   && wget ${PSOL_URL} \
- #   && tar -xzvf $(basename ${PSOL_URL})
 
 # Use SRC_PATH as a working dir
 WORKDIR $SRC_PATH
@@ -62,7 +51,6 @@ RUN wget http://nginx.org/download/nginx-${NGINX_VERSION}.tar.gz \
       --with-stream \
       --with-stream_ssl_module \
       --with-threads \
-#      --add-module=$SRC_PATH/ngx_pagespeed-latest-stable ${PS_NGX_EXTRA_FLAGS} \
     && make \
     && make install \
     && ln -s $NGINX_PATH/sbin/nginx /usr/sbin/nginx \
@@ -86,7 +74,7 @@ RUN ln -sf /dev/stdout $NGINX_PATH/logs/access.log \
     && ln -sf /dev/stderr $NGINX_PATH/logs/error.log
 
 # Share volume for sites configurations
-VOLUME ["${NGINX_PATH}/conf/sites", "${NGINX_PATH}/conf/ssl"]
+VOLUME ["${NGINX_PATH}/conf/sites", "${NGINX_PATH}/conf/ssl", "/etc/letsencrypt"]
 
 # Set ports to listen
 EXPOSE 80 443
@@ -97,8 +85,3 @@ STOPSIGNAL SIGTERM
 # Define entrypoint for container
 CMD ["nginx", "-g", "daemon off;"]
 
-#sudo apt-get install python-certbot-nginx -t stretch-backports
-#sudo certbot --authenticator webroot --installer nginx
-#sudo certbot certonly --authenticator standalone --pre-hook "nginx -s stop" --post-hook "nginx"
-#sudo certbot renew --dry-run
-#https://certbot.eff.org/#debianstretch-nginx
