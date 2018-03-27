@@ -18,7 +18,7 @@ RUN apt-get update \
 
 # Setup Environment
 ENV SRC_PATH /src
-ENV NGINX_VERSION 1.13.9
+ENV NGINX_VERSION 1.13.10
 ENV NGINX_PATH /usr/local/nginx
 
 # Use SRC_PATH as a working dir
