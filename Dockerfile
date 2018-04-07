@@ -4,7 +4,7 @@ FROM debian:latest
 # Set maintainer and image info
 LABEL Description="This image runs Nginx based web proxy" \
       Vendor="CodedRed" \
-      Version="1.1" \
+      Version="1.2" \
       Maintainer="Konstantin Kozhin <konstantin@codedred.com>"
 
 # Install backports
@@ -12,13 +12,13 @@ RUN echo 'deb http://ftp.debian.org/debian stretch-backports main' > /etc/apt/so
 
 # Install required packages
 RUN apt-get update \
-    && apt-get install build-essential wget curl vim openssl libssl-dev zlib1g-dev libpcre3 libpcre3-dev unzip sudo -y \
+    && apt-get install build-essential wget curl vim openssl libssl-dev zlib1g-dev libpcre3 libpcre3-dev unzip -y \
     && apt-get install certbot -t stretch-backports -y \ 
     && apt-get clean all
 
 # Setup Environment
 ENV SRC_PATH /src
-ENV NGINX_VERSION 1.13.10
+ENV NGINX_VERSION 1.13.11
 ENV NGINX_PATH /usr/local/nginx
 
 # Use SRC_PATH as a working dir
@@ -57,6 +57,11 @@ RUN wget http://nginx.org/download/nginx-${NGINX_VERSION}.tar.gz \
     && ln -s $NGINX_PATH /etc/nginx \
     && cd ~ \
     && rm -Rf $SRC_PATH/*
+
+# Clean up packages
+RUN apt-get remove build-essential libssl-dev zlib1g-dev libpcre3-dev unzip -y \
+    && apt-get autoremove -y \
+    && apt-get clean all
 
 # Set new working dir
 WORKDIR $NGINX_PATH
