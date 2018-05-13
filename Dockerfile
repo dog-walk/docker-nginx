@@ -11,10 +11,10 @@ LABEL Description="This image runs Nginx based web proxy" \
 RUN echo 'deb http://ftp.debian.org/debian stretch-backports main' > /etc/apt/sources.list.d/backports.list
 
 # Install required packages
-RUN apt-get update \
-    && apt-get install build-essential wget curl vim openssl libssl-dev zlib1g-dev libpcre3 libpcre3-dev unzip -y \
-    && apt-get install certbot -t stretch-backports -y \ 
-    && apt-get clean all
+RUN apt-get update && \
+    apt-get install build-essential wget curl vim openssl libssl-dev zlib1g-dev libpcre3 libpcre3-dev unzip -y && \
+    apt-get install certbot -t stretch-backports -y && \
+    apt-get clean all
 
 # Setup Environment
 ENV SRC_PATH /src
@@ -59,9 +59,9 @@ RUN wget http://nginx.org/download/nginx-${NGINX_VERSION}.tar.gz \
     && rm -Rf $SRC_PATH/*
 
 # Clean up packages
-RUN apt-get remove build-essential libssl-dev zlib1g-dev libpcre3-dev unzip -y \
-    && apt-get autoremove -y \
-    && apt-get clean all
+RUN apt-get remove build-essential libssl-dev zlib1g-dev libpcre3-dev unzip -y && \
+    apt-get autoremove -y && \
+    apt-get clean all
 
 # Set new working dir
 WORKDIR $NGINX_PATH
@@ -88,5 +88,4 @@ EXPOSE 80 443
 STOPSIGNAL SIGTERM
 
 # Define entrypoint for container
-CMD ["nginx", "-g", "daemon off;"]
-
+CMD [ "nginx", "-g", "daemon off;" ]
