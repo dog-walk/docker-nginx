@@ -7,7 +7,7 @@ LABEL Description="This image runs Nginx based web proxy" \
       Version="2.0" \
       Maintainer="Konstantin Kozhin <konstantin@codedred.com>"
 
-# Environment variables
+# Set env variables
 ENV NGINX_VERSION="1.14.0-r0"
 
 # Install package

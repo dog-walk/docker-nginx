@@ -24,7 +24,7 @@ ExecStartPre=-/usr/bin/docker rm -f $NAME
 ExecStartPre=-/usr/bin/docker pull $IMG
 
 # Main process
-ExecStart=/usr/bin/docker run --rm -v ${CONF_PATH}:/usr/local/nginx/conf/sites -v ${SSL_PATH}:/usr/local/nginx/conf/certs -v ${LETSENCRYPT_PATH}:/etc/letsencrypt --name ${NAME} -p ${HTTP_PORT} -p ${HTTPS_PORT} ${IMG}
+ExecStart=/usr/bin/docker run --rm -v ${CONF_PATH}:/etc/nginx/conf/sites -v ${SSL_PATH}:/etc/nginx/conf/certs -v ${LETSENCRYPT_PATH}:/etc/letsencrypt --name ${NAME} -p ${HTTP_PORT} -p ${HTTPS_PORT} ${IMG}
 
 # Stop main process
 ExecStop=/usr/bin/docker stop ${NAME}
