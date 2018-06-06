@@ -11,7 +11,7 @@ LABEL Description="This image runs Nginx based web proxy" \
 ENV NGINX_VERSION="1.14.0-r0"
 
 # Install package
-RUN apk add --update --no-cache certbot nginx=$NGINX_VERSION
+RUN apk add --update --no-cache nginx=$NGINX_VERSION
 
 # Create necessary folders
 RUN mkdir -p /run/nginx && \
